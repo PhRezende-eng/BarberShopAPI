@@ -5,6 +5,9 @@
   "repository": "https://github.com/PhRezende-eng/BarberShopAPI.git",
   "author": "phrezende-eng <ph.hr.001@gmail.com>",
   "license": "MIT",
+  "scripts": {
+    "dev": "node src/app.js"
+  },
   "dependencies": {
     "express": "^4.18.2"
   }
