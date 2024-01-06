@@ -1,1 +1,2 @@
-## Barber SHop API
+## Barber Shop API
+
