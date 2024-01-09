@@ -1,49 +1,76 @@
 ## Barber Shop API
+This is a API to server the app barber shop that can be found here: https://github.com/PhRezende-eng/BarberShop
 
-Part 1
+## How to Install and Configure PostgresSQL
+https://www.hostinger.com/tutorials/how-to-install-postgresql-on-ubuntu
 
-Briefing
-In this article, we will start to build a professional REST API with Typescript, Node.js, Express, MongoDB and then, deploy it to HEROKU. In the end, you can use your project as Boilerplate as a backend starter in the majority of your next projects.
+Running DB
+```
+sudo /usr/pgadmin4/bin/setup-web.sh
+```
 
-What you will learn?
-As mentioned before, in this article, you will start from scratch, then you will go through all the steps needed to build a complete Rest API. The API that you will build will be deployed to HEROKU as a production version and you will be apt to use it in real-world projects with the same method that we’ll do here.
+## How to Use Node?
 
-Starting the project
+- Part 1
+
+### Starting the project
 Create a new dir to init your new NodeJS project.
 
-mkdir node-api-rest
-cd node-api-rest
-Now start a node:
-yarn init -y
-Now your dir may have a package.json file. We’ll use the express package to start.
+```
+$mkdir project_folder_name && cd project_folder_name
+```
 
-yarn add express 
+### Now start a node:
+```
+$yarn init -y
+```
+Now your dir may have a package.json file. We’ll use the express package to start, so, add express on project.
+
+```
+$yarn add express 
+```
+
 In the application root, create a new folder called src and inside it, create the file app.js
 
-mkdir src
-touch src/app.js
+```
+$mkdir src && touch src/app.js
+```
+
 Coding a minimal server
 In the app.js let import the express and set up a minimal server response.
 
+```
 const express = require('express')
 const app = express()
 app.listen(3000)
+```
+
 And with only three lines, we already have our server running. But before the test, let’s add a response message with console.log, to let you see the message when the server started successfully.
 
+```
 const express = require('express')
 const app = express()
 app.listen(3000, ()=>console.log("Server is running at PORT 3000 🚀"))
-Creating routes
+```
+
+### Creating routes
 In app.js, let’s create our route for HTTP requests.
 
+```
 const express = require('express')
-const app = express()
-// server application
-app.listen(3000, ()=>console.log("Server is running at PORT 3000 🚀"))
-// routes
-app.get('/api',(req,res)=>{
-res.send('API online')
-})
+const app = express();
+
+app.listen(3000, () => console.log("Server is running at PORT 3000 🚀 \n on http://localhost:3000"))
+
+app.get('/api', (req, res) => {
+    res.json({
+        "data": "Hello World!",
+        "statusCode": 200,
+        "statusMessage": "ok",
+    });
+});
+```
+
 We’ve created a GET route, which means when our API receives a GET HTTP request, the client will receive the res.send response.
 
 By default, every browser sends a GET request when you access some address. So, for testing, restart your application in the terminal and access in your browser the address:
@@ -51,33 +78,34 @@ By default, every browser sends a GET request when you access some address. So, 
 http://localhost:3000
 Great! In this post, we saw how to code and run a simple API server and created a route for request/response.
 
-In the next steps, we are going to organize our project and create controllers, routes, schemas, add typescript support, connect to MongoDB, put in JWT authentication, error handling, and a few more things, so stay tuned!
+- Part 2
 
-Part 2
+### Add .gitignore file
+Let’s add a .gitignore in root folder of project to avoid send node_modules and yarn.lock folder to git. Create a .gitignore file with this line:
 
-What you will learn?
-In this article, you’ll learn how to structure the project folder and files. Set up express routes, controllers and separate the application from server.
-
-Add .gitignore file
-Let’s add a .gitignore in root folder of project to avoid send node_modules folder to git. Create a .gitignore file with this line:
-
+```
+yarn.lock
 node_modules
-Folders and files structure
+```
+
+### Folders and files structure
 Create the main folders of our API aplication. Create these folders inside of src folder.
 
-controllers
-routes
+- controllers
+- routes
+
 Add these files in inside src folder:
 
-router.js
-server.js
-Set up app/server scope
-Let’s separate the server from the application. This allows us to have a decoupled structure and will be useful for next steps to structure automated tests, temporary databases and other advantages.
+- router.js
+- server.js
 
-In part 2 of this tutorial our server ran on app.js. Now let’s actually run it on server.js and app.js will only have application settings.
+### Set up app/server scope
+
+Let’s separate the server from the application. This allows us to have a decoupled structure and will be useful for next steps to structure automated tests, temporary databases and other advantages.
 
 Now, your app.js should seems like this:
 
+```
 const express = require('express')
 // import our local router file
 const routes = require('./routes')
@@ -89,29 +117,40 @@ app.use(express.json())
 app.use(routes)
 // export app to import into server.js
 module.exports = app
+```
+
 Note that we no longer have the routes and app.listen in this file.
 
-Set up server.js
+### Set up server.js
 The server now has the role of just initializing the application. Your server.js file should seems like this:
 
+```
 const app = require('./app')
 const PORT = 3000
 app.listen(PORT, () => console.log("Server is running at PORT 3000 🚀"))
+```
+
 Now, set up the routes. Inside routes folder, create a global.js file, and define some basic route.
 
+```
 const express = require('express')
 const router = express.Router()
 // your routes paths and methods
 router.get('/api', (req, res) => { res.send('API online') })
 module.exports = router
+```
+
 Now let’s import this routes file into our routes.js
 
+```
 const express = require('express')
 const router = express.Router()
 // your routes paths and methods
 // single basic route at the base path of your application
 router.get('/', (req, res) => { res.send('API online') })
 module.exports = router
+```
+
 From now on, you must start your server with the command node src/server.js instead of src/app.js. Run your server and access the route http://localhost:3000 using your browser.
 
 —
@@ -119,14 +158,17 @@ From now on, you must start your server with the command node src/server.js inst
 Note that we got the same result as part 1 of the article. But now in a structured and organized way. Let’s go deeper. Now, instead of passing the return function directly in the route, let’s leave that to the controllers. And each route calls your controller.
 
 Inside controllers folder, create the file global.js. In this file, lets create a controller function:
+
 ```
 const globalControllers = {
 healthyCheck(req, res) { res.send('<h2>API is running</h2>') }
 }
 module.exports = globalControllers
 ```
+
 Now, we need to import this controller into your route. So, in routes/global.js, lets import the controller and use it instead the function:
 
+```
 const express = require('express')
 const router = express.Router()
 const globalController = require('./controllers/global')
@@ -134,19 +176,13 @@ const globalController = require('./controllers/global')
 // single basic route at the base path of your application
 router.get('/', globalController.healthyCheck) // we've changed this
 module.exports = router
+```
+
 And now, you can restart your API and open, in your browser, the route http://localhost:3000 and you should get the message “API Online”.
 
-Great! In this post we saw how to better structure our files, use the express route system, controllers and work with imports/exports in javascript.
 
-In the next steps, we’ll add typescript support and refact code to ES6+ using import/export syntax. Connect to MongoDB, put in JWT authentication, error handling, and a lot of more things, so stay tuned!
+- Part 3
 
-Part 3
-
-Briefing
-In this article, we will start to add Typescript support into our NodeJS Application and refactoring the previous code.
-
-What you will learn?
-In this article, you’ll learn how to add typescript support into NodeJS application and refactoring the previous code with ES6+ syntax and structure project with Typescript.
 
 Let’s get started
 Add TypeScript as a dev dependency
