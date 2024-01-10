@@ -4,10 +4,23 @@ This is a API to server the app barber shop that can be found here: https://gith
 ## How to Install and Configure PostgresSQL
 https://www.hostinger.com/tutorials/how-to-install-postgresql-on-ubuntu
 
-Running DB
+Connecting to DB
 ```
-sudo /usr/pgadmin4/bin/setup-web.sh
+$sudo -u postgres -i
 ```
+
+Running PG ADMIN
+```
+$sudo /usr/pgadmin4/bin/setup-web.sh
+```
+
+Create new password to get permission to create server on pgAdmin with:
+
+```
+ALTER USER postgres WITH PASSWORD 'new_password';
+```
+
+Insert this commando into psql terminal
 
 ## How to Use Node?
 
