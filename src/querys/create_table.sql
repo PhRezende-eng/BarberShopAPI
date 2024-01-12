@@ -16,7 +16,9 @@ CREATE TABLE
         user_id INTEGER NOT NULL,
         client_name VARCHAR(255) NOT NULL,
         date DATE NOT NULL,
-        time INTEGER NOT NULL
+        time INTEGER NOT NULL,
+        FOREIGN KEY (barbershop_id) REFERENCES barbershops(id),
+        FOREIGN KEY (user_id) REFERENCES users(id)
     );
 
 CREATE TABLE
@@ -26,7 +28,8 @@ CREATE TABLE
         name VARCHAR(255) NOT NULL,
         email VARCHAR(255) NOT NULL UNIQUE,
         opening_day TEXT [] NOT NULL,
-        opening_hours INTEGER [] NOT NULL
+        opening_hours INTEGER [] NOT NULL,
+        FOREIGN KEY (user_id) REFERENCES users(id)
     );
 
 CREATE TABLE adm_users (id SERIAL PRIMARY KEY);
