@@ -1,6 +1,9 @@
 import express, { Request, Response } from 'express';
+import testConnection from './test_connection';
 import * as data from "./data.json";
+import dotenv from "dotenv";
 
+dotenv.config();
 const app = express();
 
 app.listen(
@@ -15,6 +18,28 @@ const BSResponse = {
 }
 
 app.get('/api', (req: Request, res: Response) => {
-    BSResponse["data"] = data;
-    res.json(BSResponse);
+    let response = BSResponse;
+    response["data"] = data;
+    res.json(response);
+});
+
+app.get('/test-consult', async (req: Request, res: Response) => {
+    const response = BSResponse;
+    const result = await testConnection.testGetData();
+    response["data"] = result;
+    res.json(response);
+});
+
+app.get('/test-insert', async (req: Request, res: Response) => {
+    let response = BSResponse;
+    const result = await testConnection.testPostData();
+    response["data"] = result;
+    res.json(response);
+});
+
+app.get('/test-drop', async (req: Request, res: Response) => {
+    const response = BSResponse;
+    const result = await testConnection.testDeletAll();
+    response["data"] = result;
+    res.json(response);
 });

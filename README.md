@@ -6,7 +6,12 @@ https://www.hostinger.com/tutorials/how-to-install-postgresql-on-ubuntu
 
 Connecting to DB
 ```
-$sudo -u postgres -i
+$sudo -u postgres psql
+```
+
+Running migrations
+```
+$npx prisma migrate dev
 ```
 
 Running PG ADMIN
