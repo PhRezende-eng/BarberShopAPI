@@ -27,9 +27,8 @@ ALTER USER postgres WITH PASSWORD 'new_password';
 
 Insert this commando into psql terminal
 
-## How to Use Node?
+# How to Use Node?
 
-- Part 1
 
 ### Starting the project
 Create a new dir to init your new NodeJS project.
@@ -94,9 +93,10 @@ We’ve created a GET route, which means when our API receives a GET HTTP reques
 By default, every browser sends a GET request when you access some address. So, for testing, restart your application in the terminal and access in your browser the address:
 
 http://localhost:3000
+
 Great! In this post, we saw how to code and run a simple API server and created a route for request/response.
 
-- Part 2
+<!-- - Part 2 -->
 
 ### Add .gitignore file
 Let’s add a .gitignore in root folder of project to avoid send node_modules and yarn.lock folder to git. Create a .gitignore file with this line:
@@ -171,7 +171,6 @@ module.exports = router
 
 From now on, you must start your server with the command node src/server.js instead of src/app.js. Run your server and access the route http://localhost:3000 using your browser.
 
-—
 
 Note that we got the same result as part 1 of the article. But now in a structured and organized way. Let’s go deeper. Now, instead of passing the return function directly in the route, let’s leave that to the controllers. And each route calls your controller.
 
@@ -199,68 +198,96 @@ module.exports = router
 And now, you can restart your API and open, in your browser, the route http://localhost:3000 and you should get the message “API Online”.
 
 
-- Part 3
+# Let’s get started
 
-
-Let’s get started
 Add TypeScript as a dev dependency
-yarn add typescript -D
+```
+$yarn add typescript -D
+```
+
 Add @types for Typescript
-yarn add @types/node -D
+```
+$yarn add @types/node -D
+```
+
 Configure Typescript with tsconfig.json
 Inside root directory, in your terminal, run:
 
-tsc --init
+```
+$tsc --init
+```
+
 This may generate the tsconfig.json file. Let’s edit this config file to include the necessary option to run Typescript:
 
 In tsconfig.json, in compiler options, change the option target from ES5 to ES6.
 
+
+```
 "target": "es6",
+```
+
 Setup npm script to run the server with typescript + watch file changes
 First of all, let’s add the ts-node-dev lib to run in dev mode and watch file changes.
 
-yarn add ts-node-dev -D
+```
+$yarn add ts-node-dev -D
+```
+
 In package.json, set up a custom script with these additional options:
 
-— respawn: default command
-— clear: Will clear screen (terminal) on restart
-— ignore-watch: Files/folders to be ignored by node-dev
-— transpile-only: Consider running this flag which is normal for dev workflow and will speed up things greatly.
+- respawn: default command
+- clear: Will clear screen (terminal) on restart
+- ignore-watch: Files/folders to be ignored by node-dev
+- transpile-only: Consider running this flag which is normal for dev workflow and will speed up things greatly.
+
 In package.json, create the scripts options and add the dev command.
 
+```
 "scripts": {
    "dev": "ts-node-dev --respawn --clear --transpile-only --ignore-watch node_modules src/server.js"
 },
+```
+
 Now you can run the server. Run from the root folder the command:
 
+```
 // if you use yarn
 yarn dev
 // if you use npm
 npm run dev
-After start the server, your terminal should seem like this:
+```
 
+After start the server, your terminal should seem like this:
 
 At this moment you already have the typescript support, environment, and file watch in your application. That means now you don’t need to restart the server manually anymore. The — watch flag from ts-node will restart the server every time that a file change.
 
-Update javascript files to typescript.
+### Update javascript files to typescript.
+
 Now that our. project supports typescript, let’s update the files extensions from javascript (.js) to typescript (.ts). Update the file extensions renaming the files of the following files:
 
-/src/app.js => app.ts
-/src/server.js => server.ts
-/src/routes.js => routes.ts
-/src/controllers/global.js => global.ts
-/src/routes/global.js => global.ts
+- /src/app.js => app.ts
+- /src/server.js => server.ts
+- /src/routes.js => routes.ts
+- /src/controllers/global.js => global.ts
+- /src/routes/global.js => global.ts
+
 Now your files should look like this:
 
-Refactoring / Updating the code
+### Refactoring / Updating the code
+
 Note that your code editor probably warned you about some import/export and syntax issues. This is because now our project expects, in addition to typescript code, a modern syntax, such as import/export instead of require and module.exports. Lets fix it.
 
-Updating app.ts
+### Updating app.ts
+
 When using typescript, if the lib doesn’t have built-in types, we need to add them separately. Let’s add the express types:
 
-yarn add @types/express -D
+```
+$yarn add @types/express -D
+```
+
 Change from require syntax to import syntax. Your app.ts code should look like this:
 
+```
 import express from 'express'
 // import our local router file
 import routes from './routes'
@@ -272,28 +299,44 @@ app.use(express.json())
 app.use(routes)
 // export app to import into server.js
 export default app
-Updating server.ts
+```
+
+### Updating server.ts
+
 Here the only thing we need to change is the require syntax to import. So, your server.ts file should look like this:
 
+```
 import app from './app'
 const PORT = 3000
 app.listen(PORT, () => console.log("Server is running at PORT 3000 🚀"))
-Updating routes.ts
+```
+
+### Updating routes.ts
+
 Change the require syntax to import and change from module.exports to export default. Your routes.ts file should look like this:
 
+```
 import globalRoute from './routes/global'
 const routes = [globalRoute]
 export default routes
-Updating /controllers/global.ts
+```
+
+### Updating /controllers/global.ts
+
 Change the module exports. And probably you code editor warning about req, res params types. For now, as we are not going to worry about the correct typing in this article, add the type any to them. After that, your code should look like this:
 
+```
 const globalControllers = {
 healthyCheck(req: any, res: any) { res.send('<h2>API is running</h2>') }
 }
 export default globalControllers
-Updating /routes/global.ts
+```
+
+### Updating /routes/global.ts
+
 Change the require syntax to import and change from module.exports to export default. Your routes global.ts file should look like this:
 
+```
 import express from 'express'
 import globalController from './../controllers/global'
 const router = express.Router()
@@ -301,28 +344,27 @@ const router = express.Router()
 // single basic route at the base path of your application
 router.get('/', globalController.healthyCheck)
 export default router
-Update dev script in package.json
+```
+
+### Update dev script in package.json
+
 The dev command in scripts is trying to run the server.js file instead server.ts. So, let’s fix it. Your dev script should look like this:
 
+
+```
 "scripts": {
     "dev": "ts-node-dev --respawn --clear --transpile-only --ignore-watch node_modules src/server.ts"
   },
-After that, your terminal should be look like this.
+```
 
+After that, your terminal should be look like this.
 
 Now we have the server running, structured, supporting typescript and ES6 syntax and with automatic restart with file watch from ts-node-dev.
 
 In the next articles, we will create routes, functionality, CRUDs, connect to MongoDB, create an authentication system and much more. See you in the next article, stay tuned!
 
-Part 4
+# What CRUD API means?
 
-Briefing
-In this article, we will create a CRUD of products.
-
-What you will learn?
-In this article, you’ll learn the CRUD paradigm, implements it in NodeJS and work with Express Routes and Requests, getting data from body and url params and respond with HTTP response status and JSON data.
-
-What CRUD API means?
 The CRUD paradigm represents the four primitive database operations:CREATE, READ, UPDATE and DELETE.
 
 So, with the term CRUD API we mean, the API which have the ability to create, read, update and delete entities from a database. In this tutorial, our entity is product.
@@ -332,16 +374,19 @@ First of all, for you to understand the logic of data flow with express, let’s
 
 Our API routes will be these:
 
-GET : api/product Get all products
-GET : api/product/id Get a specific product
-POST : api/product Create a new product
-PUT : api/product/id Update an existing product
-DELETE : api/product/id Delete an existing product
-Product Controller
+- GET : api/product Get all products
+- GET : api/product/id Get a specific product
+- POST : api/product Create a new product
+- PUT : api/product/id Update an existing product
+- DELETE : api/product/id Delete an existing product
+
+### Product Controller
+
 Inside controllers, create a new file product.ts and inside it, let’s create all product controller functions.
 
 Setup basic product controller.
 
+```
 // init a empty array of products
 const products: any = []
 // simulate id, init in 0
@@ -350,19 +395,23 @@ const productControllers = {
 // here we will add the product handling functions.
 }
 export default productControllers;
-List products
+```
+
+### List products
+
 Inside productControllers object, add the new function called index.
 
-...
+```
  // list products
   index(req, res) {
     res.status(200).json({ status: 'success', data: { products } })
   },
-...
-Create product
+```
+
+### Create product
 Inside productControllers object, add the new function called create.
 
-...
+```
   create(req, res) {
     // sums 1 to id
     id++
@@ -374,11 +423,12 @@ Inside productControllers object, add the new function called create.
     console.log('products', products)
     res.status(200).json({ status: 'success', message: 'Product created' })
   },
-...
-Update product
+```
+
+### Update product
 Inside productControllers object, add the new function called update.
 
-...
+```
 update(req, res) {
     const { id } = req.params
     const { name, price } = req.body
@@ -390,11 +440,12 @@ update(req, res) {
 console.log('products', products)
     res.status(200).json({ status: 'success', message: 'Product updated' })
   },
-...
-Delete product
+```
+
+### Delete product
 Inside productControllers object, add the new function called update.
 
-...
+```
  delete(req, res) {
     const { id } = req.params
     const product = products.find(product => product.id == id)
@@ -404,8 +455,11 @@ Inside productControllers object, add the new function called update.
     console.log(products)
     res.status(200).json({ status: 'success', message: 'Product deleted' })
   }
-...
+```
+
 After adding all functions, your file should look like this:
+
+```
 // init a empty array of products
 const products: any = []
 // simulate id, init in 0
@@ -451,9 +505,12 @@ const productControllers = {
   }
 }
 export default productControllers;
-Products route
+```
+
+### Products route
 Inside routes folder, create a new file product.ts and inside it, create the routes methods.
 
+```
 import express from 'express'
 // import product controller
 import Product from './../controllers/product'
@@ -475,23 +532,31 @@ import globalRoute from './routes/global'
 import productRoute from './routes/product'
 const routes = [globalRoute, productRoute] 
 export default routes
-Restart the API server:
+```
+
+### Restart the API server:
 
 Testing the routes.
+
 You can test the routes using your REST API Client preferred.
 
-The most popular and common are:
+#### The most popular and common are:
 
 The API Design Platform and API Client — Insomnia
+
 Leading Open Source API Client, and Collaborative API Design Platform for REST, SOAP, GraphQL, and GRPC.
+
 Postman API Platform | Sign Up for Free
+
 Postman is an API platform for building and using APIs. Postman simplifies each step of the API lifecycle and streamlines collaboration so you can create better APIs — faster.
+
 Thunder Client — Lightweight Rest API Client Extension for VS Code
 Hand-crafted lightweight Rest Client for Testing APIs
 Testing routes with CURL.
+
 In the next article we will test our API with automated tests with JEST and Supertest. So, in this article for teaching purposes, we are going to test with CURL, but feel free to test in one of the REST API clients mentioned above.
 
-Basic review in CURL.
+### Basic review in CURL.
 If you don’t master CURL, see the basics of making a request via the command line.
 
 Making a basic request
@@ -527,5 +592,3 @@ Deleting a products
 In your terminal, run passing /id. Let’s delete the product with id 1.
 
 curl -X DELETE -H "Content-Type: application/json" http://localhost:3000/product/1
-
-In the next article we will transform this CRUD to MongoDB by persisting the data in the cloud on the free MongoDB hosting service. We will also test the routes with automated tests with JEST and Supertest. Stay tuned!
