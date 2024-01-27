@@ -1,8 +1,7 @@
-import express, { Request, Response } from 'express';
 import dotenv from "dotenv";
+import app from "./app";
 
 dotenv.config();
-const app = express();
 
 app.listen(
     3000,
