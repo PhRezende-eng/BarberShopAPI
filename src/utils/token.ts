@@ -1,4 +1,4 @@
-import { Secret, sign, verify } from "jsonwebtoken";
+import jwt, { JwtPayload, Secret, sign, verify } from "jsonwebtoken";
 import dotenv from 'dotenv';
 
 dotenv.config();
@@ -10,14 +10,14 @@ class ApiToken {
         this.secret = process.env.SECRET_JWT;
     }
 
-    createAccessToken = (id: number) => {
+    createAccessToken = (id: string) => {
         const token = sign({ id }, this.secret ?? "", {
             expiresIn: 60 * 5,
         });
         return token;
     };
 
-    createRefreshToken = (id: number) => {
+    createRefreshToken = (id: string) => {
         const token = sign({ id }, this.secret ?? "", {
             expiresIn: 60 * 60,
             // algorithm: 'RS256',
@@ -25,22 +25,39 @@ class ApiToken {
         return token;
     };
 
-    verifyToken = (token: string) => {
+
+    verifyAccessToken = (token: string) => {
         try {
-            return verify(token, this.secret ?? "");
+            const verificationResponse = verify(
+                token, this.secret ?? "",
+                // { algorithms: ['RS256'] },
+            );
+
+            if (typeof verificationResponse === "object") {
+                return "token_success";
+            } else {
+                return "token_expired";
+            }
         } catch (error) {
-            throw "Token inválido";
+            return "token_invalid";
         }
     }
 
     verifyRefreshToken = (token: string) => {
         try {
-            return verify(
+            const verificationResponse = verify(
                 token, this.secret ?? "",
                 // { algorithms: ['RS256'] },
             );
+
+            if (typeof verificationResponse === "object") {
+                return "token_success";
+            } else {
+                return "token_expired";
+            }
+
         } catch (error) {
-            throw "Token inválido";
+            return "token_invalid";
         }
     }
 }
