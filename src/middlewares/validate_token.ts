@@ -12,9 +12,6 @@ class ValidateApiTokenMD {
         const authHeader = req.headers['authorization'];
         const token = authHeader && authHeader.split(' ')[1];
 
-        console.log("Checking Token")
-
-
         if (!token) {
             const response = ApiResponse.error("Token não informado", 401);
             return res.status(response.status_code).json(response);
