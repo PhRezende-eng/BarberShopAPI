@@ -4,6 +4,22 @@ import apiToken from '../utils/token';
 
 class UserController {
 
+
+    private static async createTokenOnTable(access_token: string, refresh_token: string, id: string) {
+        if (access_token && refresh_token && id) {
+            await prisma.token.create(
+                {
+                    data: {
+                        access_token: access_token,
+                        refresh_token: refresh_token,
+                        user_id: id,
+                    }
+                }
+            );
+        }
+    }
+
+
     static async createAuthUser(email: string, password: string): Promise<any> {
         try {
             const response = new ApiResponse();
@@ -18,15 +34,24 @@ class UserController {
 
             if (user) {
                 const id = `${user.id}${user.email}${user.password}`;
-                response.access_token = apiToken.createAccessToken(id);
-                response.refresh_token = apiToken.createRefreshToken(id);
+
+                const access_token = apiToken.createAccessToken(id);
+                const refresh_token = apiToken.createRefreshToken(id);
+
+                response.access_token = access_token;
+                response.refresh_token = refresh_token;
                 response.type = "Bearer"
+
+                UserController.createTokenOnTable(access_token, refresh_token, id);
+
+                return response;
             } else {
                 response.data = "Usuário não encontrado";
                 response.status_code = 201;
+                return response;
             }
 
-            return response;
+
         } catch (error) {
             throw error;
         }

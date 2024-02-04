@@ -47,3 +47,10 @@ model Schedule {
 model AdmUser {
   id Int @id @default(autoincrement())
 }
+
+model Token {
+  id            Int     @id       @default(autoincrement())
+  access_token  String  @unique
+  refresh_token String  @unique
+  user_id       String  @unique
+}

@@ -11,7 +11,7 @@ $sudo -u postgres psql
 
 Running migrations
 ```
-$npx prisma migrate dev
+$yarn prisma migrate dev
 ```
 
 Running PG ADMIN

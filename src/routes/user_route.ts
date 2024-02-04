@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import UserController from '../controllers/user_controller';
 import ApiResponse from '../models/response';
 import express from 'express';
+import ValidateTokenMiddleware from "../middlewares/validate_token";
 
 const router = express.Router()
 
@@ -23,6 +24,8 @@ router.post('/auth', async (req: Request, res: Response) => {
     }
 });
 
+router.use([ValidateTokenMiddleware.validateAccessToken]);
+
 router.get('/verify_token', async (req: Request, res: Response) => {
     try {
         const access_token = req.body.access_token;
@@ -39,6 +42,18 @@ router.get('/verify_token', async (req: Request, res: Response) => {
     } catch (error) {
         const response = ApiResponse.error(String(error));
         return res.status(response.status_code!).json(response);
+    }
+});
+
+
+router.get('/me', async (req: Request, res: Response) => {
+    try {
+        // select token by access_token on bd
+        // select user by token.user_id on bd
+        // return user
+    } catch (error) {
+        const response = ApiResponse.error(String(error));
+        return res.status(response.status_code).json(response);
     }
 });
 
