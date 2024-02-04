@@ -5,18 +5,41 @@ import apiToken from '../utils/token';
 class UserController {
 
 
-    private static async createTokenOnTable(access_token: string, refresh_token: string, id: string) {
-        if (access_token && refresh_token && id) {
+    private static async insertTokenUserOnDB(access_token: string, refresh_token: string, user_id: number) {
+
+        const token = await prisma.token.findFirst(
+            {
+                where: {
+                    user_id: user_id,
+                }
+            }
+        );
+
+        if (!token) {
             await prisma.token.create(
                 {
                     data: {
                         access_token: access_token,
                         refresh_token: refresh_token,
-                        user_id: id,
+                        user_id: user_id,
+                    }
+                }
+            );
+        } else {
+            await prisma.token.update(
+                {
+                    where: {
+                        user_id: user_id,
+                    },
+
+                    data: {
+                        access_token: access_token,
+                        refresh_token: refresh_token,
                     }
                 }
             );
         }
+
     }
 
 
@@ -42,7 +65,7 @@ class UserController {
                 response.refresh_token = refresh_token;
                 response.type = "Bearer"
 
-                UserController.createTokenOnTable(access_token, refresh_token, id);
+                await UserController.insertTokenUserOnDB(access_token, refresh_token, user.id);
 
                 return response;
             } else {
@@ -71,6 +94,48 @@ class UserController {
             response.refresh_token = validateRefreshToken;
 
             return response;
+        } catch (error) {
+            throw error;
+        }
+    }
+
+
+    static async getUserByAccessToken(accessToken: string): Promise<any> {
+        try {
+            const response = new ApiResponse();
+
+            const user_token = await prisma.token.findFirst(
+                {
+                    where: {
+                        access_token: accessToken,
+                    }
+                }
+            );
+
+            if (!user_token) {
+                response.data = "Token não encontrado";
+                response.status_code = 203;
+                return response;
+            }
+
+            const user = await prisma.user.findFirst(
+                {
+                    where: {
+                        id: user_token.user_id,
+                    }
+                }
+            );
+
+            if (!user) {
+                response.data = "Usuário não encontrado";
+                response.status_code = 201;
+                return response;
+            }
+
+            response.data = user;
+
+            return response;
+
         } catch (error) {
             throw error;
         }

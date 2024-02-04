@@ -33,8 +33,7 @@ router.get('/verify_token', async (req: Request, res: Response) => {
 
         if (!access_token || !refresh_token) {
             const response = ApiResponse.error("Forbidden Access", 403);
-            res.status(response.status_code).json(response);
-            return
+            return res.status(response.status_code).json(response);
         }
 
         const response = await UserController.verifyToken(access_token, refresh_token);
@@ -48,9 +47,9 @@ router.get('/verify_token', async (req: Request, res: Response) => {
 
 router.get('/me', async (req: Request, res: Response) => {
     try {
-        // select token by access_token on bd
-        // select user by token.user_id on bd
-        // return user
+        const access_token = res.locals.access_token;
+        const response = await UserController.getUserByAccessToken(access_token);
+        return res.json(response);
     } catch (error) {
         const response = ApiResponse.error(String(error));
         return res.status(response.status_code).json(response);
