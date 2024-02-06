@@ -1,5 +1,5 @@
 CREATE TABLE
-    users (
+    "User" (
         id SERIAL PRIMARY KEY,
         name VARCHAR(255) NOT NULL,
         email VARCHAR(255) NOT NULL UNIQUE,
@@ -9,20 +9,12 @@ CREATE TABLE
         work_hours INTEGER [] NOT NULL
     );
 
-CREATE TABLE
-    schedules (
-        id SERIAL PRIMARY KEY,
-        barbershop_id INTEGER NOT NULL,
-        user_id INTEGER NOT NULL,
-        client_name VARCHAR(255) NOT NULL,
-        date DATE NOT NULL,
-        time INTEGER NOT NULL,
-        FOREIGN KEY (barbershop_id) REFERENCES barbershops(id),
-        FOREIGN KEY (user_id) REFERENCES users(id)
-    );
+CREATE TABLE "Schedule" (
+    id SERIAL PRIMARY KEY, barbershop_id INTEGER NOT NULL, user_id INTEGER NOT NULL, client_name VARCHAR(255) NOT NULL, date DATE NOT NULL, time INTEGER NOT NULL, FOREIGN KEY (barbershop_id) REFERENCES barbershops (id), FOREIGN KEY (user_id) REFERENCES users (id)
+);
 
 CREATE TABLE
-    barbershops (
+    "Barbershop" (
         id SERIAL PRIMARY KEY,
         user_id INTEGER NOT NULL,
         name VARCHAR(255) NOT NULL,
@@ -32,4 +24,4 @@ CREATE TABLE
         FOREIGN KEY (user_id) REFERENCES users(id)
     );
 
-CREATE TABLE adm_users (id SERIAL PRIMARY KEY);
+CREATE TABLE "AdmUser" (id SERIAL PRIMARY KEY);
