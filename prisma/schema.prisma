@@ -11,15 +11,36 @@ datasource db {
 }
 
 model User {
-  id         Int          @id @default(autoincrement())
-  name       String       @db.VarChar(255)
-  email      String       @unique
-  password   String       @db.VarChar(255)
-  profile    String       @db.VarChar(255)
+  id           Int           @id @default(autoincrement())
+  name         String        @db.VarChar(255)
+  email        String        @unique
+  profile      Profile       @default(E)
+  password     String        @db.VarChar(255)
+  avatar       String?       @db.VarChar(255)
+  UserADM      UserADM?
+  UserEmployee UserEmployee?
+  Barbershop   Barbershop[]
+  Schedule     Schedule?
+}
+
+model UserADM {
   work_days  String[]
   work_hours Int[]
-  Schedule   Schedule[]
-  Barbershop Barbershop[]
+  user       User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  user_id    Int      @unique
+}
+
+model UserEmployee {
+  barber_shop_id Int      @id @default(autoincrement())
+  work_days      String[]
+  work_hours     Int[]
+  user           User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  user_id        Int      @unique
+}
+
+enum Profile {
+  A
+  E
 }
 
 model Barbershop {
@@ -30,7 +51,7 @@ model Barbershop {
   email         String     @unique
   opening_day   String[]
   opening_hours Int[]
-  Schedule      Schedule[]
+  schedule      Schedule[]
 }
 
 model Schedule {
@@ -38,19 +59,15 @@ model Schedule {
   barbershop    Barbershop @relation(fields: [barbershop_id], references: [id])
   barbershop_id Int
   user          User       @relation(fields: [user_id], references: [id])
-  user_id       Int
+  user_id       Int        @unique
   client_name   String
   date          DateTime
   time          Int
 }
 
-model AdmUser {
-  id Int @id @default(autoincrement())
-}
-
 model Token {
-  id            Int     @id       @default(autoincrement())
-  access_token  String  @unique
-  refresh_token String  @unique
-  user_id       Int     @unique
+  id            Int    @id @default(autoincrement())
+  access_token  String @unique
+  refresh_token String @unique
+  user_id       Int    @unique
 }

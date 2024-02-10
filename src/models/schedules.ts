@@ -1,4 +1,4 @@
-class Schedule {
+class ScheduleModel {
     id: number;
     barbershop_id: number;
     user_id: number;

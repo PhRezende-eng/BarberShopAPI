@@ -1,4 +1,4 @@
-class Barbershop {
+class BarbershopModel {
     id: number;
     user_id: number;
     name: string;
