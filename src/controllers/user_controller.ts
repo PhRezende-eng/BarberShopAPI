@@ -220,9 +220,6 @@ class UserController {
             if (user.profile == "A") {
                 const userModel = UserController.getUserModelByType(user, userByType, user.profile);
                 response.data = userModel;
-
-                console.log(user.profile)
-
                 return response;
             } else {
                 const barberShop = await UserController.getBarberShopFromDB((userByType as UserEmployee).barber_shop_id);
