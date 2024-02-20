@@ -1,3 +1,4 @@
+import { Profile } from '@prisma/client';
 import prisma from '../db/prisma_connection';
 
 
@@ -29,9 +30,10 @@ class TestController {
                     name: 'Paulo Henrique',
                     email: 'paulo@gmail.com',
                     password: '12345',
-                    profile: 'ADM',
-                    work_days: ['Seg', 'Qua'],
-                    work_hours: [6, 7, 8],
+                    profile: Profile.A,
+                    avatar: "avatar_teste.jpg",
+                    // work_days: ['Seg', 'Qua'],
+                    // work_hours: [6, 7, 8],
                 },
             });
 

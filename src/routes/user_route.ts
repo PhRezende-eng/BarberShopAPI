@@ -12,11 +12,28 @@ router.post('/auth', async (req: Request, res: Response) => {
         const password = req.body.password;
 
         if (!email || !password) {
-            const response = ApiResponse.error("Forbidden Access", 403);
+            const response = ApiResponse.error("Fields required not used", 403);
             return res.status(response.status_code).json(response);
         }
 
         const response = await UserController.createAuthUser(email, password);
+        return res.json(response);
+    } catch (error) {
+        const response = ApiResponse.error(String(error));
+        return res.status(response.status_code!).json(response);
+    }
+});
+
+router.post('/create_user', async (req: Request, res: Response) => {
+    try {
+        const userData = req.body;
+
+        if (!userData.name || !userData.email || !userData.password || !userData.profile) {
+            const response = ApiResponse.error("Fields required not used", 403);
+            return res.status(response.status_code).json(response);
+        }
+
+        const response = await UserController.createUser(userData);
         return res.json(response);
     } catch (error) {
         const response = ApiResponse.error(String(error));
@@ -32,7 +49,7 @@ router.get('/verify_token', async (req: Request, res: Response) => {
         const refresh_token = req.body.refresh_token;
 
         if (!access_token || !refresh_token) {
-            const response = ApiResponse.error("Forbidden Access", 403);
+            const response = ApiResponse.error("Fields required not used", 403);
             return res.status(response.status_code).json(response);
         }
 

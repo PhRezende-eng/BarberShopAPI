@@ -17,10 +17,10 @@ model User {
   profile      Profile       @default(E)
   password     String        @db.VarChar(255)
   avatar       String?       @db.VarChar(255)
-  UserADM      UserADM?
-  UserEmployee UserEmployee?
-  Barbershop   Barbershop[]
-  Schedule     Schedule?
+  userADM      UserADM?
+  userEmployee UserEmployee?
+  barbershop   Barbershop[]
+  schedule     Schedule?
 }
 
 model UserADM {
@@ -31,7 +31,8 @@ model UserADM {
 }
 
 model UserEmployee {
-  barber_shop_id Int      @id @default(autoincrement())
+  barbershop    Barbershop @relation(fields: [barber_shop_id], references: [id])
+  barber_shop_id Int
   work_days      String[]
   work_hours     Int[]
   user           User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
@@ -52,6 +53,7 @@ model Barbershop {
   opening_day   String[]
   opening_hours Int[]
   schedule      Schedule[]
+  userEmployee  UserEmployee[]
 }
 
 model Schedule {
