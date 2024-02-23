@@ -12,7 +12,7 @@ class ApiToken {
 
     createAccessToken = (id: string) => {
         const token = sign({ id }, this.secret ?? "", {
-            expiresIn: 60 * 5,
+            expiresIn: 60 * 10,
         });
         return token;
     };

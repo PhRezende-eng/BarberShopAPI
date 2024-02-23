@@ -73,5 +73,20 @@ router.get('/me', async (req: Request, res: Response) => {
     }
 });
 
+router.get('/users', async (req: Request, res: Response) => {
+    try {
+        const profileQuery = req.query.profile;
+        if (profileQuery !== 'employee' && profileQuery !== 'administrator' && profileQuery != null) {
+            const response = ApiResponse.error("Invalid param value", 405);
+            return res.status(response.status_code).json(response);
+        }
+        const response = await UserController.getUsers(profileQuery);
+        return res.json(response);
+    } catch (error) {
+        const response = ApiResponse.error(String(error));
+        return res.status(response.status_code).json(response);
+    }
+});
+
 
 export default router;

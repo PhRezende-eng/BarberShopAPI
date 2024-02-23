@@ -2,7 +2,7 @@ import prisma from '../db/prisma_connection';
 import ApiResponse from '../models/response';
 import apiToken from '../utils/token';
 import { Barbershop, Profile, User, UserADM, UserEmployee } from '@prisma/client'
-import { UserADMModel, UserEmployeeModel } from '../models/user';
+import { UserADMModel, UserEmployeeModel, UserModel } from '../models/user';
 
 class UserController {
 
@@ -152,9 +152,7 @@ class UserController {
                 userByProfile.work_hours,
             );
             return userModel;
-        }
-
-        if (user.profile == Profile.E) {
+        } else {
             {
                 const userModel = new UserEmployeeModel(
                     user.id,
@@ -171,7 +169,6 @@ class UserController {
             }
         }
 
-        return null;
     }
 
     static generateAllTokens(user: User) {
@@ -356,6 +353,72 @@ class UserController {
             throw error;
         }
     }
+
+    static async getUsers(profileQuery?: string): Promise<ApiResponse> {
+        try {
+            const response = new ApiResponse();
+            const usersEntitie = await prisma.user.findMany();
+
+
+            const users: Array<UserModel> = [];
+
+            if (profileQuery != null) {
+                if (profileQuery === "administrator") {
+                    for (const user of usersEntitie) {
+                        const userProfileEntitie = await prisma.userADM.findFirst({
+                            where: { user_id: user.id }
+                        });
+
+                        if (userProfileEntitie) {
+                            const userModel = UserController.getUserModelByProfile(user, userProfileEntitie);
+                            users.push(userModel);
+                        }
+                    }
+                } else {
+                    for (const user of usersEntitie) {
+                        const userProfileEntitie = await prisma.userEmployee.findFirst({
+                            where: { user_id: user.id }
+                        });
+
+                        if (userProfileEntitie) {
+                            const userModel = UserController.getUserModelByProfile(user, userProfileEntitie);
+                            users.push(userModel);
+                        }
+                    }
+                }
+            } else {
+                for (const user of usersEntitie) {
+                    let userProfileEntitie;
+
+                    if (user.profile == Profile.A) {
+                        userProfileEntitie = await prisma.userADM.findFirst({
+                            where: { user_id: user.id }
+                        });
+                    } else {
+                        userProfileEntitie = await prisma.userEmployee.findFirst({
+                            where: { user_id: user.id }
+                        });
+                    }
+
+                    if (userProfileEntitie) {
+                        const userModel = UserController.getUserModelByProfile(user, userProfileEntitie);
+                        users.push(userModel);
+                    }
+
+                }
+
+            }
+
+
+
+            response.data = users;
+            return response;
+        } catch (error) {
+            throw error;
+        }
+    }
 }
+
+
 
 export default UserController;

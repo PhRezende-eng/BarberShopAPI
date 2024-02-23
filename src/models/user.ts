@@ -1,4 +1,4 @@
-abstract class UserModel {
+export abstract class UserModel {
     id: number;
     name: string;
     email: string;
