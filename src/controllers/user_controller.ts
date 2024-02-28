@@ -359,6 +359,7 @@ class UserController {
             const response = new ApiResponse();
             const usersEntitie = await prisma.user.findMany();
 
+            //TODO: Refactor this to not repeat code
 
             const users: Array<UserModel> = [];
 

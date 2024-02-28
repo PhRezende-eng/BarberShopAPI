@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
+import express from 'express';
 import UserController from '../controllers/user_controller';
 import ApiResponse from '../models/response';
-import express from 'express';
 import ValidateTokenMiddleware from "../middlewares/validate_token";
 
 const router = express.Router()
@@ -41,9 +41,8 @@ router.post('/create_user', async (req: Request, res: Response) => {
     }
 });
 
-router.use([ValidateTokenMiddleware.validateAccessToken]);
 
-router.get('/verify_token', async (req: Request, res: Response) => {
+router.get('/verify_token', ValidateTokenMiddleware.validateAccessToken, async (req: Request, res: Response) => {
     try {
         const access_token = req.body.access_token;
         const refresh_token = req.body.refresh_token;
@@ -62,7 +61,7 @@ router.get('/verify_token', async (req: Request, res: Response) => {
 });
 
 
-router.get('/me', async (req: Request, res: Response) => {
+router.get('/me', ValidateTokenMiddleware.validateAccessToken, async (req: Request, res: Response) => {
     try {
         const access_token = res.locals.access_token;
         const response = await UserController.getUserByAccessToken(access_token);
@@ -73,7 +72,7 @@ router.get('/me', async (req: Request, res: Response) => {
     }
 });
 
-router.get('/users', async (req: Request, res: Response) => {
+router.get('/users', ValidateTokenMiddleware.validateAccessToken, async (req: Request, res: Response) => {
     try {
         const profileQuery = req.query.profile;
         if (profileQuery !== 'employee' && profileQuery !== 'administrator' && profileQuery != null) {
