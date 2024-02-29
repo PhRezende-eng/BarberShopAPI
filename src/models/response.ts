@@ -1,4 +1,4 @@
-class Response {
+class ResponseModel {
     data: string | Object;
     status_code: number;
     status_message: string;
@@ -24,7 +24,7 @@ class Response {
 
 
     static error(message: string, status?: number) {
-        const response = new Response();
+        const response = new ResponseModel();
         response.data = message;
         response.status_code = status ?? 500;
         response.status_message = "Error";
@@ -34,4 +34,4 @@ class Response {
 }
 
 
-export default Response;
+export default ResponseModel;

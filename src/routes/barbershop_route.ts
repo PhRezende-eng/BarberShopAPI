@@ -2,13 +2,15 @@ import { Request, Response, Router } from "express";
 
 import ApiResponse from '../models/response';
 import BarbershopController from "../controllers/barbershop_controller";
+import ValidateApiTokenMD from "../middlewares/validate_token";
 
 const router = Router();
 
-router.get('/barbershop', async (req: Request, res: Response) => {
+
+router.get('/barbershop', ValidateApiTokenMD.validateAccessToken, async (req: Request, res: Response) => {
     try {
         const { user_id } = req.query;
-        const response = await BarbershopController.getBabrbershop(typeof user_id === 'string' ? user_id : undefined);
+        const response = await BarbershopController.getBabrbershop(typeof user_id === 'string' ? Number(user_id) : undefined);
         return res.json(response);
     } catch (error) {
         const response = ApiResponse.error(String(error));

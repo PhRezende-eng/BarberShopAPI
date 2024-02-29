@@ -1,5 +1,4 @@
-import jwt, { JwtPayload, Secret, sign, verify } from "jsonwebtoken";
-import { Response, Request } from "express";
+import { Response, Request, NextFunction } from "express";
 import dotenv from 'dotenv';
 import TokenUtil from '../utils/token';
 import ApiResponse from '../models/response';
@@ -8,7 +7,7 @@ import ApiResponse from '../models/response';
 dotenv.config();
 
 class ValidateApiTokenMD {
-    validateAccessToken = (req: Request, res: Response, next: any) => {
+    validateAccessToken = (req: Request, res: Response, next: NextFunction) => {
         const authHeader = req.headers['authorization'];
         const token = authHeader && authHeader.split(' ')[1];
 
