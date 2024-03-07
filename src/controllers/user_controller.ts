@@ -1,7 +1,7 @@
 import prisma from '../db/prisma_connection';
 import ApiResponse from '../models/response';
 import apiToken from '../utils/token';
-import { Barbershop, Profile, User, UserADM, UserEmployee } from '@prisma/client'
+import { Barbershop, Prisma, Profile, User, UserADM, UserEmployee } from '@prisma/client'
 import { UserADMModel, UserEmployeeModel, UserModel } from '../models/user';
 
 class UserController {
@@ -153,20 +153,18 @@ class UserController {
             );
             return userModel;
         } else {
-            {
-                const userModel = new UserEmployeeModel(
-                    user.id,
-                    user.name,
-                    user.email,
-                    (userByProfile as UserEmployee).barber_shop_id,
-                    userByProfile.work_days,
-                    userByProfile.work_hours,
-                    user.profile,
-                    user.password,
-                    user.avatar,
-                );
-                return userModel;
-            }
+            const userModel = new UserEmployeeModel(
+                user.id,
+                user.name,
+                user.email,
+                (userByProfile as UserEmployee).barber_shop_id,
+                userByProfile.work_days,
+                userByProfile.work_hours,
+                user.profile,
+                user.password,
+                user.avatar,
+            );
+            return userModel;
         }
 
     }
@@ -184,7 +182,8 @@ class UserController {
         try {
 
             const response = new ApiResponse();
-            const user = await prisma.user.findFirst(
+
+            const user = await prisma.user.findFirstOrThrow(
                 {
                     where: {
                         email: email,
@@ -195,22 +194,24 @@ class UserController {
 
             if (user) {
                 const userTokens = UserController.generateAllTokens(user);
-
                 response.access_token = userTokens.access_token;
                 response.refresh_token = userTokens.refresh_token;
                 response.type = "Bearer"
 
                 await UserController.insertTokenUserOnDB(userTokens.access_token, userTokens.refresh_token, user.id);
-
                 return response;
             } else {
-                response.data = "Usuário não encontrado";
-                response.status_code = 201;
+                const response = ApiResponse.error("Usuário não encontrado", 201);
                 return response;
             }
 
 
         } catch (error) {
+            if (error instanceof Prisma.PrismaClientKnownRequestError && error.code == 'P2025') {
+                const response = ApiResponse.error("Usuário não encontrado", 201);
+                return response;
+            }
+
             throw error;
         }
     }

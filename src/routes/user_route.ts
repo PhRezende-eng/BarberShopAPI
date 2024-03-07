@@ -17,7 +17,7 @@ router.post('/auth', async (req: Request, res: Response) => {
         }
 
         const response = await UserController.createAuthUser(email, password);
-        return res.json(response);
+        return res.status(response.status_code!).json(response);
     } catch (error) {
         const response = ApiResponse.error(String(error));
         return res.status(response.status_code!).json(response);
