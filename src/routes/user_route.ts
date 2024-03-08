@@ -34,7 +34,7 @@ router.post('/create_user', async (req: Request, res: Response) => {
         }
 
         const response = await UserController.createUser(userData);
-        return res.json(response);
+        return res.status(response.status_code!).json(response);
     } catch (error) {
         const response = ApiResponse.error(String(error));
         return res.status(response.status_code!).json(response);
@@ -53,7 +53,7 @@ router.get('/verify_token', ValidateTokenMiddleware.validateAccessToken, async (
         }
 
         const response = await UserController.verifyToken(access_token, refresh_token);
-        return res.json(response);
+        return res.status(response.status_code!).json(response);
     } catch (error) {
         const response = ApiResponse.error(String(error));
         return res.status(response.status_code!).json(response);
@@ -65,7 +65,7 @@ router.get('/me', ValidateTokenMiddleware.validateAccessToken, async (req: Reque
     try {
         const access_token = res.locals.access_token;
         const response = await UserController.getUserByAccessToken(access_token);
-        return res.json(response);
+        return res.status(response.status_code!).json(response);
     } catch (error) {
         const response = ApiResponse.error(String(error));
         return res.status(response.status_code).json(response);
@@ -74,13 +74,13 @@ router.get('/me', ValidateTokenMiddleware.validateAccessToken, async (req: Reque
 
 router.get('/users', ValidateTokenMiddleware.validateAccessToken, async (req: Request, res: Response) => {
     try {
-        const profileQuery = req.query.profile;
-        if (profileQuery !== 'employee' && profileQuery !== 'administrator' && profileQuery != null) {
+        const profileType = req.query.profile;
+        if (profileType !== 'employee' && profileType !== 'administrator' && profileType != null) {
             const response = ApiResponse.error("Invalid param value", 405);
             return res.status(response.status_code).json(response);
         }
-        const response = await UserController.getUsers(profileQuery);
-        return res.json(response);
+        const response = await UserController.getUsers(profileType);
+        return res.status(response.status_code!).json(response);
     } catch (error) {
         const response = ApiResponse.error(String(error));
         return res.status(response.status_code).json(response);

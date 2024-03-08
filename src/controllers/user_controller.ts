@@ -290,8 +290,7 @@ class UserController {
             );
 
             if (!user_token) {
-                response.data = "Token não encontrado";
-                response.status_code = 203;
+                const response = ApiResponse.error("Token não encontrado", 203);
                 return response;
             }
 
@@ -304,16 +303,14 @@ class UserController {
             );
 
             if (!user) {
-                response.data = "Usuário não encontrado";
-                response.status_code = 201;
+                const response = ApiResponse.error("Usuário não encontrado", 201);
                 return response;
             }
 
             const userByProfile = await UserController.getUserRemaingDataByProfileType(user.id, user.profile);
 
             if (!userByProfile) {
-                response.data = "Usuário não encontrado";
-                response.status_code = 201;
+                const response = ApiResponse.error("Perfil de usuário não encontrado", 201);
                 return response;
             }
 
@@ -321,8 +318,7 @@ class UserController {
                 const userModel = UserController.getUserModelByProfile(user, userByProfile);
 
                 if (!userModel) {
-                    response.data = "Perfil de usuário incorreto";
-                    response.status_code = 201;
+                    const response = ApiResponse.error("Perfil de usuário incorreto", 201);
                     return response;
                 }
 
@@ -333,16 +329,14 @@ class UserController {
             const barberShop = await UserController.getBarberShopFromDB((userByProfile as UserEmployee).barber_shop_id);
 
             if (!barberShop) {
-                response.data = "Barbearia relacionada não encontrada";
-                response.status_code = 201;
+                const response = ApiResponse.error("Barbearia relacionada não encontrada", 201);
                 return response;
             }
 
             const userModel = UserController.getUserModelByProfile(user, userByProfile);
 
             if (!userModel) {
-                response.data = "Perfil de usuário incorreto";
-                response.status_code = 201;
+                const response = ApiResponse.error("Perfil de usuário incorreto", 201);
                 return response;
             }
 
@@ -355,7 +349,7 @@ class UserController {
         }
     }
 
-    static async getUsers(profileQuery?: string): Promise<ApiResponse> {
+    static async getUsers(profileType?: string): Promise<ApiResponse> {
         try {
             const response = new ApiResponse();
             const usersEntitie = await prisma.user.findMany();
@@ -364,8 +358,8 @@ class UserController {
 
             const users: Array<UserModel> = [];
 
-            if (profileQuery != null) {
-                if (profileQuery === "administrator") {
+            if (profileType != null) {
+                if (profileType === "administrator") {
                     for (const user of usersEntitie) {
                         const userProfileEntitie = await prisma.userADM.findFirst({
                             where: { user_id: user.id }

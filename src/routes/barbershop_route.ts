@@ -27,7 +27,7 @@ router.get('/barbershop', ValidateApiTokenMD.validateAccessToken, async (req: Re
             typeof barbershop_id === 'string' ? Number(barbershop_id) : undefined,
         );
 
-        return res.json(response);
+        return res.status(response.status_code).json(response);
     } catch (error) {
         const response = ApiResponse.error(String(error));
         return res.status(response.status_code!).json(response);

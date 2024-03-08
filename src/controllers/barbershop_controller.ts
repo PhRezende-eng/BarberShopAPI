@@ -43,7 +43,6 @@ class BarbershopController {
     }
 
     static async getBabrbershop(userId?: number, barbershopId?: number): Promise<ApiResponse> {
-
         if (userId != null) {
             const barbershops = await BarbershopController.getBarbershopFromDB(userId, undefined) as Barbershop[] | null;
 
@@ -54,6 +53,8 @@ class BarbershopController {
                 }
                 return new ApiResponse(barbershopModels);
             }
+
+            return ApiResponse.error(`Barbershop not found with user id ${userId}`, 403);
         }
 
         if (barbershopId != null) {
@@ -63,11 +64,11 @@ class BarbershopController {
                 const barbershopModel = BarbershopController.getBarbershopModel(barbershop);
                 return new ApiResponse(barbershopModel);
             }
+
+            return ApiResponse.error(`Barbershop not found with barbershop_id ${barbershop}`, 403);
         }
 
-
-
-        return ApiResponse.error(`Barbershop not found with user id ${userId}`, 403);
+        return ApiResponse.error(`Send barbershop_id or user_id`, 403);
     }
 }
 
